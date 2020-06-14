@@ -50,11 +50,11 @@ class FeatureLogger:
 
             # Sanitize (Solr has a strict syntax that can easily be tripped up)
             # This removes anything but alphanumeric and spaces
-            keywords = re.sub('([^\s\w]|_)+', '', keywords)
+            fixed_keywords = re.sub('([^\s\w]|_)+', '', keywords)
 
             params = {
-                "keywords": keywords,
-                "fuzzy_keywords": ' '.join([x + '~' for x in keywords.split(' ')])
+                "keywords": fixed_keywords,
+                "fuzzy_keywords": ' '.join([x + '~' for x in fixed_keywords.split(' ')])
             }
 
             res = self.client.log_query(self.index, self.feature_set, ids, params)
@@ -70,9 +70,11 @@ class FeatureLogger:
         for judgment in judgments:
             try:
                 if judgment.qid != qid:
-                    raise RuntimeError("Judgment qid inconsistent with logged qid")
+                    raise RuntimeError("Judgment qid {} inconsistent with logged qid {}".format(
+                        judgment.qid, qid))
                 if judgment.keywords != keywords:
-                    raise RuntimeError("Judgment keywords inconsistent with logged keywords")
+                    raise RuntimeError("Judgment keywords {} inconsistent with logged keywords {}".format(
+                        judgment.keywords, keywords))
                 features = featuresPerDoc[judgment.doc_id] # If KeyError, then we have a judgment but no movie in index
                 judgment.features = features
             except KeyError:
