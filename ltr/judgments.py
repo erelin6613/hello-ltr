@@ -68,9 +68,24 @@ def judgments_reader(f):
         pass
 
 class Judgment:
-    def __init__(self, grade, qid, keywords, doc_id, features=[], weight=1):
+
+    known_keywords={}
+
+    @classmethod
+    def qid_for_keywords(cls, keywords):
+        try:
+            return cls.known_keywords[keywords]
+        except KeyError:
+            new_qid=len(cls.known_keywords)+1
+            cls.known_keywords[keywords] = new_qid
+            return new_qid
+
+    def __init__(self, grade, keywords, doc_id, qid=None, features=[], weight=1):
         self.grade = grade
-        self.qid = qid
+        if qid is not None:
+            self.qid = qid
+        else: #Convenience, we assign a qid
+            self.qid = Judgment.qid_for_keywords(keywords)
         self.keywords = keywords
         self.doc_id = doc_id
         self.features = features # 0th feature is ranklib feature 1
