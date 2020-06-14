@@ -1,5 +1,5 @@
 #!/bin/bash
-TESTS="tests/run_most_nbs.py"
+TESTS=" -m unittest discover  -p run_*_nbs.py  -s tests/"
 REBUILD_CONTAINERS=false
 
 # Parse any args...
@@ -13,16 +13,6 @@ do
         TESTS=`echo $ARGUMENT | cut -d '=' -f 2`
     fi
 done
-
-# 
-if test -f $TESTS; then
-    echo "Running Tests: $TESTS - FOUND!"
-else
-    echo "================================================"
-    echo "> POOP!   Bad Argument for --test-command 😾:"
-    echo "> File $TESTS Missing  "
-    exit 1
-fi
 
 # Confirm needed Requirements are present here
 # TODO: may need to check version in future
