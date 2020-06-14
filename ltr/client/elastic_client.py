@@ -231,8 +231,12 @@ class ElasticClient(BaseClient):
 
         return mapping, rawFeatureSet
 
-    def get_doc(self, doc_id, index):
-        resp = self.es.get(index=index, id=doc_id)
+    def get_doc(self, doc_id, index, fields=None):
+        if fields:
+            resp = self.es.get(index=index, id=doc_id, _source_includes=fields)
+            return resp['_source']
+        else:
+            resp = self.es.get(index=index, id=doc_id)
+            return resp['_source']
         #resp_msg(msg="Fetched Doc".format(docId), resp=ElasticResp(resp), throw=False)
-        return resp['_source']
 

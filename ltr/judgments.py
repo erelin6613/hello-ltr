@@ -68,29 +68,29 @@ def judgments_reader(f):
         pass
 
 class Judgment:
-    def __init__(self, grade, qid, keywords, docId, features=[], weight=1):
+    def __init__(self, grade, qid, keywords, doc_id, features=[], weight=1):
         self.grade = grade
         self.qid = qid
         self.keywords = keywords
-        self.docId = docId
+        self.doc_id = doc_id
         self.features = features # 0th feature is ranklib feature 1
         self.weight = weight
 
     def sameQueryAndDoc(self, other):
-        return self.qid == other.qid and self.docId == other.docId
+        return self.qid == other.qid and self.doc_id == other.doc_id
 
     def has_features(self):
         return self.features is not None and (len(self.features) > 0)
 
     def __str__(self):
-        return "grade:%s qid:%s (%s) docid:%s" % (self.grade, self.qid, self.keywords, self.docId)
+        return "grade:%s qid:%s (%s) docid:%s" % (self.grade, self.qid, self.keywords, self.doc_id)
 
     def __repr__(self):
-        return "Judgment(grade={grade},qid={qid},keywords={keywords},docId={docId},features={features},weight={weight}".format(**vars(self))
+        return "Judgment(grade={grade},qid={qid},keywords={keywords},doc_id={doc_id},features={features},weight={weight}".format(**vars(self))
 
     def toRanklibFormat(self):
         featuresAsStrs = ["%s:%s" % (idx+1, feature) for idx, feature in enumerate(self.features)]
-        comment = "# %s\t%s" % (self.docId, self.keywords)
+        comment = "# %s\t%s" % (self.doc_id, self.keywords)
         return "%s\tqid:%s\t%s %s" % (self.grade, self.qid, "\t".join(featuresAsStrs), comment)
 
 
@@ -131,13 +131,13 @@ def _queriesFromHeader(lines):
     return rVal
 
 def _judgmentsFromBody(lines):
-    """ Parses out judgment/grade, query id, docId, and possibly features in line such as:
+    """ Parses out judgment/grade, query id, doc_id, and possibly features in line such as:
          4  qid:523   # a01  Grade for Rambo for query Foo
 
          Or
 
          4  qid:523  1:42.6 2:0.5  # a01  Grade for Rambo for query Foo
-        <judgment> qid:<queryid> # docId <rest of comment ignored...)"""
+        <judgment> qid:<queryid> # doc_id <rest of comment ignored...)"""
     # Regex can be debugged here:
     # http://www.regexpal.com/?fam=96565
     regex = re.compile('^(\d+)\s+qid:(\d+)\s+#\s+(\w+).*')
@@ -152,7 +152,7 @@ def _judgmentsFromBody(lines):
             if m:
                 grade = int(m.group(1))
                 qid = int(m.group(2))
-                docId = m.group(3)
+                doc_id = m.group(3)
                 ftrMatches = re.finditer(ftrRegex, line)
 
                 features = {}
@@ -173,7 +173,7 @@ def _judgmentsFromBody(lines):
                     if featureVal is None:
                         raise ValueError("Missing Features Detected When Parsing Training Set")
 
-                yield grade, qid, docId, featuresList
+                yield grade, qid, doc_id, featuresList
 
             pass
             #print("Not Recognized as Judgment %s" % line)
@@ -181,7 +181,7 @@ def _judgmentsFromBody(lines):
 
 def _judgment_rows(f, qidToKeywords):
     lastQid = -1
-    for grade, qid, docId, features in _judgmentsFromBody(f):
+    for grade, qid, doc_id, features in _judgmentsFromBody(f):
         if qid < lastQid:
             raise ValueError("Judgments not sorted by qid in file")
         if lastQid != qid and qid % 100 == 0:
@@ -189,7 +189,7 @@ def _judgment_rows(f, qidToKeywords):
         yield Judgment(grade=grade, qid=qid,
                        keywords=qidToKeywords[qid][0],
                        weight=qidToKeywords[qid][1],
-                       docId=docId,
+                       doc_id=doc_id,
                        features=features)
         lastQid = qid
 
@@ -251,7 +251,7 @@ def duplicateJudgmentsByWeight(judgmentsByQid):
                                           qid=judg.qid,
                                           keywords=judg.keywords,
                                           weight=judg.weight,
-                                          docId=judg.docId))
+                                          doc_id=judg.doc_id))
         return destJudgments
 
     rVal = {}

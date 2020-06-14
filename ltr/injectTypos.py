@@ -29,7 +29,7 @@ def typoIt(judgmentInFile, judgmentOutFile, rounds=100):
                     typoJudg = Judgment(grade=judg.grade,
                                         qid=newQid,
                                         keywords=keywordsWTypo,
-                                        docId=judg.docId)
+                                        doc_id=judg.doc_id)
                     currJudgments.append(typoJudg)
                 existingTypos.add(keywordsWTypo)
 

@@ -165,16 +165,16 @@ class EvalReport:
         report = []
         for qid, judgList in judgmentsByQid.items():
             if len(judgList) > 1:
-                minGradeDocId = judgList[0].docId
-                maxGradeDocId = judgList[0].docId
+                minGradeDocId = judgList[0].doc_id
+                maxGradeDocId = judgList[0].doc_id
                 minGrade = maxGrade = judgList[0].grade
                 for judg in judgList:
                     if judg.grade < minGrade:
                         minGrade = judg.grade
-                        minGradeDocId = judg.docId
+                        minGradeDocId = judg.doc_id
                     if judg.grade > maxGrade:
                         maxGrade = judg.grade
-                        maxGradeDocId = judg.docId
+                        maxGradeDocId = judg.doc_id
                 if minGrade != maxGrade:
                     report.append(Whoopsie(qid=qid, judgList=judgList,
                                            minGrade=minGrade, maxGrade=maxGrade,

@@ -43,7 +43,7 @@ class BaseClient(ABC):
         pass
 
     @abstractmethod
-    def get_doc(self, doc_id):
+    def get_doc(self, doc_id, fields=None):
         pass
 
     @abstractmethod

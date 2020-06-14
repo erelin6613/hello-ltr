@@ -78,7 +78,7 @@ def synthesize(client, judgmentsOutFile='genre_by_date_judgments.txt', autoNegat
                 continue
             judgment = Judgment(qid=qid,
                                 grade=genreGrade(movie),
-                                docId=movie['id'],
+                                doc_id=movie['id'],
                                 keywords=genre)
             judgments.append(judgment)
 
@@ -94,7 +94,7 @@ def synthesize(client, judgmentsOutFile='genre_by_date_judgments.txt', autoNegat
                 negQid=genreQid(negGenre)
                 judgment = Judgment(qid=negQid,
                                     grade=0,
-                                    docId=movie['id'],
+                                    doc_id=movie['id'],
                                     keywords=negGenre)
                 judgments.append(judgment)
     with open(judgmentsOutFile, 'w') as f:

@@ -6,16 +6,20 @@ from ltr.helpers.convert import convert
 from ltr.helpers.handle_resp import resp_msg
 
 class SolrClient(BaseClient):
-    def __init__(self):
-        self.docker = os.environ.get('LTR_DOCKER') != None
-        self.solr = requests.Session()
-
-        if self.docker:
-            self.host = 'solr'
-            self.solr_base_ep = 'http://solr:8983/solr'
-        else:
+    def __init__(self, host=None):
+        if host:
+            self.solr_base_ep=host
             self.host = 'localhost'
-            self.solr_base_ep = 'http://localhost:8983/solr'
+        else:
+            self.docker = os.environ.get('LTR_DOCKER') != None
+            self.solr = requests.Session()
+
+            if self.docker:
+                self.host = 'solr'
+                self.solr_base_ep = 'http://solr:8983/solr'
+            else:
+                self.host = 'localhost'
+                self.solr_base_ep = 'http://localhost:8983/solr'
 
     def get_host(self):
         return self.host
@@ -291,10 +295,13 @@ class SolrClient(BaseClient):
 
         return mapping, rawFeatureSet
 
-    def get_doc(self, index, doc_id):
+    def get_doc(self, index, doc_id, fields=None):
+        if fields is None:
+            fields = ['*', 'score']
         params = {
             'q': 'id:{}'.format(doc_id),
-            'wt': 'json'
+            'wt': 'json',
+            'fl': ','.join(fields)
         }
 
         resp = requests.post('{}/{}/select'.format(self.solr_base_ep, index), data=params).json()

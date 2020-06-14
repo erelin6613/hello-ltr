@@ -44,7 +44,7 @@ def synthesize(client, featureSet='release', latestTrainingSetOut='data/latest-t
         if rating == 0 and NO_ZERO:
             continue
 
-        judgments.append(Judgment(qid=1,docId=rating,grade=rating,features=fv,keywords=''))
+        judgments.append(Judgment(qid=1,doc_id=rating,grade=rating,features=fv,keywords=''))
 
     with open(classicTrainingSetOut, 'w') as out:
         judgments_to_file(out, judgments)
@@ -56,7 +56,7 @@ def synthesize(client, featureSet='release', latestTrainingSetOut='data/latest-t
         if rating == 0 and NO_ZERO:
             continue
 
-        judgments.append(Judgment(qid=1,docId=rating,grade=rating,features=fv,keywords=''))
+        judgments.append(Judgment(qid=1,doc_id=rating,grade=rating,features=fv,keywords=''))
 
 
     with open(latestTrainingSetOut, 'w') as out:
